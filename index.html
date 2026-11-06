@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#101510" />
+  <title>Oddboard — Chess Sandbox</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Oddboard home"><span class="brand-mark">♞</span><span>oddboard<span class="brand-period">.</span></span></a>
+      <div class="topbar-note"><span class="live-dot"></span> THE CHESS LAB <span class="top-divider">/</span> SANDBOX 01</div>
+      <button class="icon-button help-button" id="helpBtn" aria-label="How to play">?</button>
+    </header>
+
+    <section class="intro">
+      <div class="eyebrow"><span>01</span> &nbsp; A LITTLE RULE-BREAKING</div>
+      <h1>Chess, with a <em>twist.</em></h1>
+      <p>Play a classic game, or invent a piece that changes everything.</p>
+    </section>
+
+    <section class="workspace">
+      <div class="board-column">
+        <div class="gamebar">
+          <div class="player-chip" id="blackPlayer"><span class="player-dot black-dot"></span><div><b>BLACK</b><small>Home side</small></div></div>
+          <div class="turn-status"><span class="turn-indicator" id="turnIndicator"></span><span id="turnText">White to move</span></div>
+          <div class="player-chip player-right" id="whitePlayer"><span class="player-dot white-dot"></span><div><b>WHITE</b><small>You’re up</small></div></div>
+        </div>
+        <div class="board-frame">
+          <div class="rank-labels" id="rankLabels" aria-hidden="true"></div>
+          <div class="board" id="board" role="grid" aria-label="Chess board"></div>
+          <div class="file-labels" id="fileLabels" aria-hidden="true"></div>
+        </div>
+        <div class="board-footer">
+          <div class="move-status" id="moveStatus"><span class="status-icon">✦</span><span>Standard setup · Make your move</span></div>
+          <div class="board-actions">
+            <button class="text-action" id="undoBtn" title="Undo last move"><span>↶</span> Undo</button>
+            <button class="text-action" id="flipBtn" title="Flip board"><span>⇅</span> Flip</button>
+            <button class="text-action" id="resetBtn" title="Reset game"><span>⟲</span> Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <section class="panel piece-panel">
+          <div class="panel-heading"><div><div class="eyebrow">YOUR ARSENAL</div><h2>Piece workshop</h2></div><span class="panel-count" id="pieceCount">0</span></div>
+          <p class="panel-copy">Create a custom piece, then place it on the board to play.</p>
+          <div class="custom-list" id="customList"><div class="empty-piece"><span class="empty-glyph">✳</span><span>Your inventions will live here.</span></div></div>
+          <button class="create-piece-btn" id="openCreate"><span>＋</span> Create a piece</button>
+          <div class="placement-hint" id="placementHint"><span class="hint-mark">↗</span> Choose a piece above, then tap a square to place it.</div>
+        </section>
+
+        <section class="panel move-panel">
+          <div class="panel-heading move-heading"><div><div class="eyebrow">THE MATCH</div><h2>Move log</h2></div><span class="move-count" id="moveCount">0 PLIES</span></div>
+          <div class="move-log" id="moveLog"><div class="log-empty"><span>♟</span> Your first move starts the story.</div></div>
+        </section>
+        <div class="sidebar-foot"><span>✦</span> Standard chess rules, with room to experiment.</div>
+      </aside>
+    </section>
+    <footer class="page-footer"><span>ODDBOARD / CHESS SANDBOX</span><span>MAKE YOUR OWN RULES.</span></footer>
+  </main>
+
+  <div class="modal-backdrop" id="createModal" aria-hidden="true">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="closeCreate" aria-label="Close">×</button>
+      <div class="eyebrow">THE WORKSHOP <span class="step-label">/ NEW PIECE</span></div>
+      <h2 id="modalTitle">Dream up a new move.</h2>
+      <p class="modal-intro">Give your piece a name and a movement pattern. You can place as many as you like.</p>
+      <label class="field-label" for="pieceName">PIECE NAME</label>
+      <div class="name-row"><input id="pieceName" maxlength="16" placeholder="e.g. The Warden" autocomplete="off"><div class="symbol-preview" id="symbolPreview">✦</div><input id="pieceSymbol" class="symbol-input" maxlength="2" value="✦" aria-label="Piece symbol" title="Change symbol"></div>
+      <div class="form-row"><div><label class="field-label" for="pieceColor">SIDE</label><select id="pieceColor"><option value="white">White</option><option value="black">Black</option></select></div><div class="move-style"><label class="field-label">MOVEMENT</label><button class="style-toggle active" id="stepToggle" type="button">Step</button><button class="style-toggle" id="slideToggle" type="button">Slide</button></div></div>
+      <div class="field-label pattern-label">CHOOSE DIRECTIONS <span>Tap the squares your piece can move toward.</span></div>
+      <div class="pattern-wrap"><div class="pattern-grid" id="patternGrid" aria-label="Choose movement directions"></div><div class="pattern-legend"><span>Each marked square is a direction. Slide pieces travel any distance that way; step pieces move one square.</span></div></div>
+      <div class="modal-error" id="modalError"></div>
+      <div class="modal-actions"><button class="cancel-btn" id="cancelCreate">Cancel</button><button class="save-piece-btn" id="savePiece">Create piece <span>↗</span></button></div>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="game.js"></script>
+</body>
+</html>
